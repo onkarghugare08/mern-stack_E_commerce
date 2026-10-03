@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend
+  namespace: mernstack
+
+spec:
+  selector:
+    app: ecommerce-frontend
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80 # container port
+      nodePort: 30001
+  type: NodePort

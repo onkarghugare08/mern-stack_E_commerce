@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-frontend-deployment
+  namespace: mernstack
+  labels:
+    app: ecommerce-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-frontend
+  template:
+    metadata:
+      labels:
+        app: ecommerce-frontend
+    spec:
+      containers:
+      - name: ecommerce-frontend
+        image: onkar1817/mern-ecommerce-frontend:latest
+        ports:
+        - containerPort: 80
+
+        resources:
+          requests: # minimum resource requirement
+            cpu: 10m # 0.01 Cores of CPU
+            memory: 64Mi # 67 Mb of RAM
+
+          limits: # maximum resource requirement
+            cpu: 250m # 0.25 Cores of CPU
+            memory: 128Mi

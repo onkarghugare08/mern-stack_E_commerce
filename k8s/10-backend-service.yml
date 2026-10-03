@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend
+  namespace: mernstack
+
+spec:
+  selector:
+    app: ecommerce-backend
+
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000 # container port

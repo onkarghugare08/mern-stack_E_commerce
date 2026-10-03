@@ -1,0 +1,64 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: mongodb
+  namespace: mernstack
+  labels:
+    app: ecommerce-mongodb
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-mongodb
+  serviceName: mongodb
+  template:
+    metadata:
+      labels:
+        app: ecommerce-mongodb
+
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:7
+        ports:
+        - containerPort: 27017
+          name: mongodb
+        volumeMounts:
+        - name: mongodata
+          mountPath: /data/db
+        
+        env:
+          - name: MONGO_ROOT_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: ecommerce-configmap
+                key: MONGO_ROOT_USERNAME
+
+          - name: MONGO_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ecommerce-secrets
+                key: MONGO_ROOT_PASSWORD
+
+          - name: MONGO_ROOT_DB
+            valueFrom:
+              configMapKeyRef:
+                name: ecommerce-configmap
+                key: MONGO_ROOT_DB
+        readinessProbe:
+         exec:
+            command:
+              - /bin/sh
+              - -c
+              - mongosh --quiet --eval "db.adminCommand('ping')"
+          
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodata
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "manual"
+      resources:
+        requests:
+          storage: 0.5Gi

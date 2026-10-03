@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongodb
+  namespace: mernstack
+
+spec:
+  clusterIP: None
+  selector:
+    app: ecommerce-mongodb
+
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

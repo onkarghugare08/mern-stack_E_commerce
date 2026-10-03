@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-backend-deployment
+  namespace: mernstack
+  labels:
+    app: ecommerce-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-backend
+  template:
+    metadata:
+      labels:
+        app: ecommerce-backend
+    spec:
+      containers:
+      - name: ecommerce-backend
+        image: onkar1817/mern-ecommerce-backend:latest
+        ports:
+        - containerPort: 5000
+        env:
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ecommerce-configmap
+                key: PORT
+
+          - name: MONGO_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ecommerce-secrets
+                key: MONGO_ROOT_PASSWORD
+
+          - name: MONGO_ROOT_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: ecommerce-configmap
+                key:  MONGO_ROOT_USERNAME
+
+          - name: MONGO_ROOT_DB
+            valueFrom:
+              configMapKeyRef:
+                name: ecommerce-configmap
+                key: MONGO_ROOT_DB
+
+          - name: MONGO_URL
+            value: mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@mongodb:27017/$(MONGO_ROOT_DB)?authSource=admin
+        resources:
+          requests: # minimum resource requirement
+            cpu: 10m # 0.01 Cores of CPU
+            memory: 64Mi # 67 Mb of RAM
+
+          limits: # maximum resource requirement
+            cpu: 250m # 0.25 Cores of CPU
+            memory: 128Mi
